@@ -1,4 +1,3 @@
-
 ## Table of Contents
 
   1. [Types](#types)
@@ -26,6 +25,16 @@
   1. [Testing](#testing)
   1. [Performance](#performance)
   1. [Resources](#resources)
+
+## One Style Guide to rule them all 
+
+> ### No matter what the documentation says, the source code is the ultimate truth, the best and most definitive and up-to-date documentation you're likely to find. 
+> ### - Jeff Atwood
+
+### All code in any code-base should look like a single person typed it, no matter how many people contributed
+
+> ### "Arguments over style are pointless. There should be a style guide, and you should follow it" 
+> ### - Rebecca Murphy
 
 ## Types
 
@@ -181,26 +190,6 @@
     // good
     var fullName = 'Bob ' + this.lastName;
     ```
-
-  - Strings longer than 80 characters should be written across multiple lines using string concatenation.
-  - Note: If overused, long strings with concatenation could impact performance. [jsPerf](http://jsperf.com/ya-string-concat) & [Discussion](https://github.com/airbnb/javascript/issues/40).
-
-    ```javascript
-    // bad
-    var errorMessage = 'This is a super long error that was thrown because of Batman. When you stop to think about how Batman had anything to do with this, you would get nowhere fast.';
-
-    // bad
-    var errorMessage = 'This is a super long error that was thrown because \
-    of Batman. When you stop to think about how Batman had anything to do \
-    with this, you would get nowhere \
-    fast.';
-
-    // good
-    var errorMessage = 'This is a super long error that was thrown because ' +
-      'of Batman. When you stop to think about how Batman had anything to do ' +
-      'with this, you would get nowhere fast.';
-    ```
-
   - When programmatically building up a string, use Array#join instead of string concatenation. Mostly for IE: [jsPerf](http://jsperf.com/string-vs-array-concat/2).
 
     ```javascript
@@ -271,6 +260,8 @@
 
   - Never declare a function in a non-function block (if, while, etc). Assign the function to a variable instead. Browsers will allow you to do it, but they all interpret it differently, which is bad news bears.
   - **Note:** ECMA-262 defines a `block` as a list of statements. A function declaration is not a statement. [Read ECMA-262's note on this issue](http://www.ecma-international.org/publications/files/ECMA-ST/Ecma-262.pdf#page=97).
+  
+    ```
 
     ```javascript
     // bad
@@ -302,6 +293,20 @@
       // ...stuff...
     }
     ```
+
+  - Functions as objects. If declared as a function first then a variable can both have properties and be executed as functions.(WAT ?)
+  
+    ```
+	var test = function(){ console.log('test'); };
+	
+	test.hasProperties = true;
+	test.isAlsoFunction = true;
+
+	test(); //writes 'test' to the console
+	
+	//writes true to the console
+	console.log(test.hasProperties);
+	
 
 **[⬆ back to top](#table-of-contents)**
 
@@ -338,6 +343,8 @@
 
     var isJedi = getProp('jedi');
     ```
+
+   
 
 **[⬆ back to top](#table-of-contents)**
 
@@ -746,25 +753,6 @@
 
 ## Whitespace
 
-  - Use soft tabs set to 2 spaces.
-
-    ```javascript
-    // bad
-    function() {
-    ∙∙∙∙var name;
-    }
-
-    // bad
-    function() {
-    ∙var name;
-    }
-
-    // good
-    function() {
-    ∙∙var name;
-    }
-    ```
-
   - Place 1 space before the leading brace.
 
     ```javascript
@@ -823,30 +811,6 @@
 
     // good
     var x = y + 5;
-    ```
-
-  - End files with a single newline character.
-
-    ```javascript
-    // bad
-    (function(global) {
-      // ...stuff...
-    })(this);
-    ```
-
-    ```javascript
-    // bad
-    (function(global) {
-      // ...stuff...
-    })(this);↵
-    ↵
-    ```
-
-    ```javascript
-    // good
-    (function(global) {
-      // ...stuff...
-    })(this);↵
     ```
 
   - Use indentation when making long method chains. Use a leading dot, which
@@ -999,6 +963,7 @@
 ## Semicolons
 
   - **Yup.**
+  - There is some debate about whether or not semicolon are neccesary since javascript will try to put them in for you. We use semicolons. Always.
 
     ```javascript
     // bad
@@ -1165,17 +1130,6 @@
     });
     ```
 
-  - Use a leading underscore `_` when naming private properties.
-
-    ```javascript
-    // bad
-    this.__firstName__ = 'Panda';
-    this.firstName_ = 'Panda';
-
-    // good
-    this._firstName = 'Panda';
-    ```
-
   - When saving a reference to `this` use `_this`.
 
     ```javascript
@@ -1296,94 +1250,9 @@
 **[⬆ back to top](#table-of-contents)**
 
 
-## Constructors
-
-  - Assign methods to the prototype object, instead of overwriting the prototype with a new object. Overwriting the prototype makes inheritance impossible: by resetting the prototype you'll overwrite the base!
-
-    ```javascript
-    function Jedi() {
-      console.log('new jedi');
-    }
-
-    // bad
-    Jedi.prototype = {
-      fight: function fight() {
-        console.log('fighting');
-      },
-
-      block: function block() {
-        console.log('blocking');
-      }
-    };
-
-    // good
-    Jedi.prototype.fight = function fight() {
-      console.log('fighting');
-    };
-
-    Jedi.prototype.block = function block() {
-      console.log('blocking');
-    };
-    ```
-
-  - Methods can return `this` to help with method chaining.
-
-    ```javascript
-    // bad
-    Jedi.prototype.jump = function() {
-      this.jumping = true;
-      return true;
-    };
-
-    Jedi.prototype.setHeight = function(height) {
-      this.height = height;
-    };
-
-    var luke = new Jedi();
-    luke.jump(); // => true
-    luke.setHeight(20); // => undefined
-
-    // good
-    Jedi.prototype.jump = function() {
-      this.jumping = true;
-      return this;
-    };
-
-    Jedi.prototype.setHeight = function(height) {
-      this.height = height;
-      return this;
-    };
-
-    var luke = new Jedi();
-
-    luke.jump()
-      .setHeight(20);
-    ```
-
-
-  - It's okay to write a custom toString() method, just make sure it works successfully and causes no side effects.
-
-    ```javascript
-    function Jedi(options) {
-      options || (options = {});
-      this.name = options.name || 'no name';
-    }
-
-    Jedi.prototype.getName = function getName() {
-      return this.name;
-    };
-
-    Jedi.prototype.toString = function toString() {
-      return 'Jedi - ' + this.getName();
-    };
-    ```
-
-**[⬆ back to top](#table-of-contents)**
-
-
 ## Events
 
-  - When attaching data payloads to events (whether DOM events or something more proprietary like Backbone events), pass a hash instead of a raw value. This allows a subsequent contributor to add more data to the event payload without finding and updating every handler for the event. For example, instead of:
+  - When attaching data payloads to events (whether DOM events or something more proprietary like Backbone events), pass a hash instead of a raw value(AKA The Config Pattern). This allows a subsequent contributor to add more data to the event payload without finding and updating every handler for the event.  For example, instead of:
 
     ```js
     // bad
@@ -1410,38 +1279,6 @@
     ```
 
   **[⬆ back to top](#table-of-contents)**
-
-
-## Modules
-
-  - The module should start with a `!`. This ensures that if a malformed module forgets to include a final semicolon there aren't errors in production when the scripts get concatenated. [Explanation](https://github.com/airbnb/javascript/issues/44#issuecomment-13063933)
-  - The file should be named with camelCase, live in a folder with the same name, and match the name of the single export.
-  - Add a method called `noConflict()` that sets the exported module to the previous version and returns this one.
-  - Always declare `'use strict';` at the top of the module.
-
-    ```javascript
-    // fancyInput/fancyInput.js
-
-    !function(global) {
-      'use strict';
-
-      var previousFancyInput = global.FancyInput;
-
-      function FancyInput(options) {
-        this.options = options || {};
-      }
-
-      FancyInput.noConflict = function noConflict() {
-        global.FancyInput = previousFancyInput;
-        return FancyInput;
-      };
-
-      global.FancyInput = FancyInput;
-    }(this);
-    ```
-
-**[⬆ back to top](#table-of-contents)**
-
 
 ## jQuery
 
