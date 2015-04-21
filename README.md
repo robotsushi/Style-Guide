@@ -577,26 +577,28 @@
     }
     ```
 
-  - Use shortcuts.
+  - Don't use shortcuts, they lead to false positives. Be explict about what you are checking.
 
     ```javascript
     // bad
-    if (name !== '') {
+   if (collection.length) {
       // ...stuff...
     }
 
     // good
-    if (name) {
-      // ...stuff...
-    }
-
-    // bad
     if (collection.length > 0) {
       // ...stuff...
     }
 
+    // bad
+    var isValid = function(){ return false; };
+    if (isValid) {
+      // ...stuff...
+    }
+
     // good
-    if (collection.length) {
+    var isValid = function(){ return false; };
+    if (isValid !== null && isValid !== undefined) {
       // ...stuff...
     }
     ```
